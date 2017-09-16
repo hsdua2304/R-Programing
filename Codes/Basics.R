@@ -1,67 +1,23 @@
-x=50
-y=100
-z=x+y
+# Installing a R Package
 
+install.packages("slidify")
 
-library(sqldf)
-search(sqldf)
-help("sqldf")
-??sqldf
+packs<-installed.packages()
+exc <- names(packs[,"dplyr"])
+av <- names(available.packages()[,1])
+ins <- av[!av %in% exc]
+install.packages(ins)
 
+install.packages('MASS')
+
+# Loading R package into Memory
 library(MASS)
-help("MASS")
-??MASS
-#vector
-location <- c("Delhi","Gurgaon","Chennai","Banglore")
-location
-print(location)
-str(location)
+shoes
 
-gender<-factor(c("Male","Female","N/A","Male","Female"))
-gender
-gender<-factor(gender)
-length(gender)
-head(gender,3)
+# Finding available function in package
 
-install.packages("readr")
-library(readr)
+install.packages("downloader")
+library(downloader)
+install.packages("dplyr")
 
-ds<-read_csv("C:/Users/Harmandeep/OneDrive/Analytix Labs/R/1. Introduction to R-Data Importing/DataSets for R sessions/stores.csv")
-view(ds)
-str(ds)
-summary(ds)
-View(ds)
-library()
-getwd()
-ls()
-write.csv(ds,"~/ds.csv")
-save.image(file="~/R/Environment/ds_image.rdata")
-list=ls()
-list
-rm(list)
-list()
-list
-ls()
-rm(ls())
-rm(x)
-rm(list<-ls())
-list<-ls()
-list
-list
-rm(list)
-load("~/R/Environment/ds_image.rdata")
 
-View(ds)
-edit(ds)
-head(ds)
-View(head(ds))
-View(tail(ds,20))
-summary(ds)
-describe(ds)
-install.packages("psych")
-library(psych)
-describe(psych)
-describe(ds)
-warning(describe(ds))
-require(psych)
-describe(ds)
