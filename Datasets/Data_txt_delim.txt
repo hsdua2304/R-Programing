@@ -1,0 +1,9 @@
+Type@gender@id
+general@0@70
+vocational@1@121
+general@0@86
+vocational@0@141
+academic@0@172
+academic@0@113
+general@0@50
+academic@0@11

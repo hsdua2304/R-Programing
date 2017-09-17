@@ -1,0 +1,17 @@
+"Manufacturer" "Model" "MinPrice" "Price" "MaxPrice"
+"Chevrolet" "Cavalier" 8.5 13.4 18.3
+"Chevrolet" "Corsica" 11.4 11.4 11.4
+"Chevrolet" "Camaro" 13.4 15.1 16.8
+"Chevrolet" "Lumina" 13.4 15.9 18.4
+"Chevrolet" "Lumina_APV" 14.7 16.3 18
+"Chevrolet" "Astro" 14.7 16.6 18.6
+"Chevrolet" "Caprice" 18 18.8 19.6
+"Chevrolet" "Corvette" 34.6 38 41.5
+"Ford" "Festiva" 6.9 7.4 7.9
+"Ford" "Escort" 8.4 10.1 11.9
+"Ford" "Tempo" 10.4 11.3 12.2
+"Ford" "Mustang" 10.8 15.9 21
+"Ford" "Probe" 12.8 14 15.2
+"Ford" "Aerostar" 14.5 19.9 25.3
+"Ford" "Taurus" 15.6 20.2 24.8
+"Ford" "Crown_Victoria" 20.1 20.9 21.7
