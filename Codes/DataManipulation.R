@@ -270,3 +270,231 @@ format(c(6.0,13.12,123.234),digits = 2,nsmall = 1)
 
 format(2^31-1)
 format(2^31-1,scientific = T)
+
+
+# USING DPLYR PACKAGE TO PERFORM DATA MANIPULATION STEPS
+
+require(dplyr)
+View(iris)
+
+# Subsetting
+
+filter(iris,Sepal.Length>7)
+slice(iris,10:15)
+
+select(iris,Sepal.Width,Petal.Length, Species) # select is used to keep the variables you want
+select(iris,contains('.'))
+select(iris,ends_with('Length'))
+select(iris,everything())
+select(iris,matches('.th'))
+select(iris,num_range(1:5))
+?num_range
+
+
+# New Variable Creation
+
+mutate(iris,sepal=Sepal.Length + Sepal.Width) #mutate adds new variable and preserves the rest
+transmute(iris,sepal=Sepal.Length+Sepal.Width) # transmute adds new variable and drops the rest
+
+
+# Removing Duplicates
+
+distinct(iris)
+
+# Sorting
+
+arrange(iris,Petal.Width,desc(Sepal.Length))
+
+# Getting top n observation
+
+top_n(iris,2,Sepal.Length)
+
+# Summarization
+
+summarise(iris, avg=mean(Sepal.Length))
+summarise_each(iris,funs(mean))
+
+View(iris)
+
+group_by(iris,Species)
+summarise(group_by(iris,Species),tot=sum(Sepal.Length),avg=mean(Sepal.Length))
+
+# Flow
+
+iris %>% group_by(Species) %>% summarise(tot=sum(Sepal.Length),avg=mean(Sepal.Length))
+
+iris %>% group_by(Species) %>% mutate(tot=sum(Sepal.Length),avg=mean(Sepal.Length))
+
+# Counting Number of Observations
+
+count(iris,Species,wt=Sepal.Width)
+
+# Getting top Observation based on variables
+
+top_n(group_by(iris,Species),2,Sepal.Width)
+
+# getting the structure of dataset
+
+glimpse(iris)
+
+# Renaming Variables
+
+rename(iris,sepal_length=Sepal.Length)
+
+sessionInfo() # rename function is conflicting as reshape and plyr packages are in memory
+detach(package:reshape,unload = T)
+detach(package:plyr,unload = T)
+
+# JOINING OR MERGING DATASETS
+
+a<-read.csv('E:/R-Programing/Datasets/Demographic_Data.csv',header = T)
+b<-read.csv('E:/R-Programing/Datasets/Transaction_Summary.csv',header = T)
+
+left_join(a,b,by=c('CustName' = 'CustomerName')) #Join matching rows from b to a
+right_join(a,b,by=c('CustName'='CustomerName')) # Join matching rows from a to b
+inner_join(a,b,by=c('CustName'='CustomerName')) # Join data, retain matching rows in a and b
+full_join(a,b,by=c('CustName'='CustomerName')) # Join Data, retain all values from a and b
+semi_join(a,b,by=c('CustName'='CustomerName')) # All rows in a that have a match in b
+anti_join(a,b,by=c('CustName'='CustomerName')) # All rows in a that do not have match in b
+
+# Set Operations
+
+x<-read.csv('E:/R-Programing/Datasets/Score.csv',header = T)
+y<-read.csv('E:/R-Programing/DataSets/Score1.csv',header = T)
+
+
+intersect(x,y) #rows that appear in both x and y
+union(x,y) # rows that apppear either in x or in y
+setdiff(x,y) # rows that appear in x but not in y
+bind_cols(x,y) # Append columns of y to x
+bind_rows(x,y) # Appand rows of y to x
+
+
+# SAMPLING
+
+View(sample_frac(iris,0.1,replace = T))
+?sample
+
+sample_n(iris,10,replace = T)
+
+
+# DATA MANIPULATION TOOLS
+
+# USING SQL
+
+require(sqldf)
+
+newdf<-sqldf('Select * from dg as a left join ts as b on a.CustName=b.CustomerName')
+View(newdf)
+
+sqldf('select avg(OperatingCost) as avg_OperatingCOst, avg(TOtalSales) as avg_TotalSales,
+Tenure from stores where Staff_Cnt > 50 group by Tenure')
+
+# USER DEFINED FUNCTIONS
+
+ds_sum<-function(ds){
+  h<-head(ds)
+  t<-tail(ds)
+  s<-str(ds)
+  d<-dim(ds)
+  n<-ncol(ds)
+  na<-names(ds)
+  l<-length(ds)
+  
+  return(list(head=h,tail=t,structure=s,dim=d,ncol=n,names=na,l))
+  
+}
+
+stores_sum<-ds_sum(stores)
+
+stores_sum$head
+
+
+# APPLY FUNCTIONS - ALTERNATIVE FOR LOOPS
+
+for(i in 1:15){
+  print('Missing Value Summary')
+  print(colnames(stores)[i])
+  print(class(stores[,i]))
+  print(sum(is.na(stores[i]))/length(stores[i]))
+}
+
+sum(is.na(stores[9]))
+length(stores[9])
+
+for(i in 1:15){
+  summary1 <- sum(is.na(stores[i]))/length(stores[i])
+}
+
+
+# Apply Function
+
+#Create Matrix of 10 rows and 2 columns
+
+m<-matrix(c(1:20),nrow=10,ncol = 2)
+m
+
+# sum of rows
+
+apply(m,1,sum)
+apply(m,2,sum)
+
+# mean of columns
+
+apply(m,2,mean)
+
+# divide all values by 2
+
+apply(m,1:2,function(x) x/2)
+
+# lapply
+# Lapply returns a list of the same length a l, each elemant of which is the result of applying
+# FUN to the corresponding element of l
+
+# sapply is a user-freindly version of lapply
+
+
+l<-list(a=1:10,b=11:15,c=m)
+length(l)
+
+# ?apply()
+# ?lapply
+
+lapply(l,mean)
+lapply(l,sum)
+sapply(l,mean)
+
+l.mean <- sapply(l,mean)
+class(l.mean)
+l.mean[['a']]
+
+# vapply
+
+l.fivenum <- vapply(l,fivenum,c(Min.=0,'1st Qu.'=0,Median=0,'3rd Qu'=0,Max.=0))
+l.fivenum
+
+?fivenum
+class(l.fivenum)
+
+# mapply
+# mapply is a mutlivariable version of sapply
+
+l1<-list(a=c(1:10),b=c(11:20))
+l2<-list(c=c(21:30),d=c(31:40))
+
+#sum the corresponding elements of l1 and l2
+mapply(sum,l1$a,l1$b,l2$c,l2$d)
+
+
+# rapply
+# rapply is the recursive version of lapply
+
+rapply(l,log)
+class(rapply(l,log,how = 'list'))
+
+rapply(l,mean)
+rapply(l,mean,how = 'list')
+
+
+# attach(iris)
+tapply(iris$Petal.Length,Species,mean)
