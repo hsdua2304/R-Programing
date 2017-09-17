@@ -263,4 +263,93 @@ class(my_list)
 
 #Indexing
 
-dim(list)
+dim(my_list)
+my_list$name
+my_list[3]
+my_list[[1]]
+my_list[[1]][2]
+names(my_list)
+
+
+#DATAFRAMES
+# TABLE WITH SAME TYPE WITH THE COLUMNS AND DIFFRENT TYPE BETWEEN THE COLUMNS
+
+my_df<-data.frame(id=c(1,2,3),name=c("Harman","Natesh","Ankit"),Goals=c(50,45,32))
+
+dim(my_df)
+str(my_df)
+summary(my_df)
+
+
+#Built in data objects(datasets)
+
+?datasets
+library(help=datasets)
+library(datasets)
+
+
+data("mtcars")
+cars<-mtcars
+detach(package:datasets)
+summary(cars)
+?data()
+
+#Basic Functions for Dataframe
+
+mtcars
+cars
+View(cars)
+head(cars,10)
+tail(cars)
+str(cars)
+names(cars)
+
+
+v1 = cars$disp
+newvar<-cars$disp + cars$hp
+v2<-cars$mpg
+v3<-cars$cyl
+v4<-cars$drat
+
+cars<-rbind(v1,v2,v3,v4)
+View(cars)
+cars<-cbind(v1,v2,v3,v4)
+View(cars)
+
+
+
+#IMPORTING DATAFILES
+
+#IMPORT FLAT FILES
+data.txt<-read.table("E:/R-Programing/Datasets/cust_seg.txt",sep='\t',header = TRUE)
+View(data.txt)
+
+data_csv<-read.delim("E:/R-Programing/Datasets/cust_seg.csv",sep=',',header=FALSE)
+View(data_csv)
+
+Data.User <- read.csv(choose.files(),header = TRUE)
+View(Data.User)
+
+
+#Reading Excel files
+install.packages("rJava")
+install.packages("XLConnect")
+require(rJava)
+library(XLConnect)
+data.XLSX1<-readWorksheet(loadWorkbook("E:/R-Programing/Datasets/Data_Xlsx.xls"),sheet=1)
+View(data.XLSX1)
+
+install.packages("xlsx")
+require(xlsx)
+data.xls<-read.xlsx(file="E:/R-Programing/Datasets/Data_Xlsx.xlsx" ,sheetIndex=1)
+View(data.xls)
+
+install.packages("sas7bdat")
+require(sas7bdat)
+
+memory.size()
+memory.limit()
+print(object.size(data.XLSX1),units='Mb')
+
+library(sas7bdat)
+require(sas7bdat)
