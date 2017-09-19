@@ -117,3 +117,44 @@ customer_360$Life_Stage_Segment<-cut(customer_360$age,breaks = c(-Inf,22,27,40,6
                                                 'Married_with_youndKids','Pre-retired',
                                                 'Retired'))
 # View(customer_360)
+
+# PROBLEM:7
+# ---------
+
+# Converting Location as character variable so we can split the location based on comma.
+Location<-as.character(customer_360$Location)
+Location<-strsplit(Location,',')
+
+# Storing the splitted values in city and state variable respectively
+customer_360$City<-sapply(Location,function(x) x[1])
+customer_360$State<-sapply(Location,function(x) x[2])
+
+# Dropping the location variable from the dataset.
+drop<-c('Location')
+customer_360<-customer_360[,!names(customer_360) %in% drop]
+
+# View(customer_360)
+
+
+# PROBLEM:8
+# ---------
+
+# Dividing the Dataset into delinquent and non-delinquent datasets
+require(sqldf)
+delinquent<-sqldf('Select * from customer_360  where SeriousDlqin2yrs = 1')
+non_delinquent<-sqldf('Select * from customer_360  where SeriousDlqin2yrs = 0')
+
+write.csv(delinquent,file = 'E:/R-Programing/RCaseStudy2/delinquent.csv')
+write.csv(non_delinquent,file = 'E:/R-Programing/RCaseStudy2/non_delinquent.csv')
+
+
+# PROBLEM:9
+# ---------
+
+Top_50_Customers<-arrange(customer_360,desc(MonthlyIncome))[1:50,]
+View(Top_50_Customers)
+
+
+# PROBLEM:10
+# ----------
+View(sqldf('Select TOP(10) from customer_360 group by state'))
