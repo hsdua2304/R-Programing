@@ -8,7 +8,8 @@
 
 cust_data<-read.csv(choose.files(),header = T)
 cust_demo<-read.csv(choose.files(),header = T)
-
+View(cust_data)
+View(cust_demo)
 # PROBLEM:2
 # ---------
 # EXPLORE THE TWO DATASETS USING DIFFRENT FUNCTIONS
@@ -59,8 +60,8 @@ cust_demo_explore$description
 # ---------
 
 customer_360<-merge(cust_data,cust_demo,by.x = c('ID'),by.y = c('ID'),all.x = T)
-View(customer_360)
-str(customer_360)
+# View(customer_360)
+# str(customer_360)
 
 
 # PROBLEM:4
@@ -68,9 +69,51 @@ str(customer_360)
 
 customer_360$MonthlyIncome<-as.numeric(as.character(customer_360$MonthlyIncome))
 customer_360$NumberOfDependents<-as.numeric(as.character(customer_360$NumberOfDependents))
-str(customer_360)
+
+# Dropping the rows have NA's in the list
+customer_360<-customer_360[!(is.na(customer_360$MonthlyIncome) | is.na(customer_360$NumberOfDependents)),]
+
+# View(customer_360)
+# str(customer_360)
 
 
 # PROBLEM:5
 # ---------
 
+# Sorting the customer_360 dataset according to monthly income
+customer_360<-arrange(customer_360,MonthlyIncome)
+
+# User defined function to calculate the percentile score of each customer
+# based on the monthly income
+percentile<-function(a){
+  vector<-list(which(a!=-1,T))
+  l<-vector('list',length(a))
+  for(i in vector){
+    l[i]<-(i/length(a))*100
+  }
+  return(l)
+}
+
+# Calculating the Percentile score based on monthly income
+customer_360$percentile_score<-percentile(customer_360$MonthlyIncome)
+
+# Converting the list variable into numeric
+customer_360$percentile_score<-as.numeric(customer_360$percentile_score)
+
+# Binning the monthly income based on the percentile score calculated for each customer
+customer_360$Income_segment<-cut(customer_360$percentile_score,breaks = c(-Inf,20,40,60,80,Inf),
+                                 labels = c('Very Low Value Customers','Low Value Customers',
+                                            'Medium Value Customers','High Value Customers',
+                                            'Prime Value Customers'))
+
+# View(customer_360)
+
+
+# PROBLEM:6
+# ---------
+
+customer_360$Life_Stage_Segment<-cut(customer_360$age,breaks = c(-Inf,22,27,40,60,Inf),
+                                     labels = c('Student','UnMarried_employed',
+                                                'Married_with_youndKids','Pre-retired',
+                                                'Retired'))
+# View(customer_360)
