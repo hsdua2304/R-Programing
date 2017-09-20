@@ -473,7 +473,7 @@ l.mean[['a']]
 l.fivenum <- vapply(l,fivenum,c(Min.=0,'1st Qu.'=0,Median=0,'3rd Qu'=0,Max.=0))
 l.fivenum
 
-?fivenum
+?fivenumf
 class(l.fivenum)
 
 # mapply
