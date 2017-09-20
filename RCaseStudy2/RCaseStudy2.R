@@ -157,4 +157,13 @@ View(Top_50_Customers)
 
 # PROBLEM:10
 # ----------
-View(sqldf('Select TOP(10) from customer_360 group by state'))
+
+#' View(sqldf('Select * from 
+#'            (Select * from customer_360
+#'            state_rank:=if(@current_state=State,@state_rank + 1,1) as state_rank,
+#'            @current_state:=State 
+#'            from customer_360 order by State,MonthlyIncome desc)
+#'            where state_rank<=10'))
+
+Top_10_Customer<-arrange(customer_360,desc(State),desc(MonthlyIncome)) %>% group_by(State) %>% top_n(n=10,wt=MonthlyIncome)
+View(Top_10_Customer)
