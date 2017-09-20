@@ -71,3 +71,10 @@ sample_dataset2<-sample_n(cust_demo,10000,replace = T)
 View(sample_dataset1)
 
 # Problem : 9
+#------------
+
+(count(cust_leftjoin,Martial_Status))
+
+# Problem : 10
+#-------------
+
