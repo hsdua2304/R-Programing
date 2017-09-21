@@ -51,7 +51,6 @@ cust_fulljoin<-full_join(cust_data,cust_demo,by=c('ID'='ID'))
 cust_semijoin<-semi_join(cust_data,cust_demo,by=c('ID'='ID'))
 cust_antijoin<-semi_join(cust_data,cust_demo,by=c('ID'='ID'))
 
-
 # Problem : 7
 #------------
 

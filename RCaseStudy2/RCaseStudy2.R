@@ -60,20 +60,26 @@ cust_demo_explore$description
 # ---------
 
 customer_360<-merge(cust_data,cust_demo,by.x = c('ID'),by.y = c('ID'),all.x = T)
-# View(customer_360)
+View(customer_360)
 # str(customer_360)
 
 
 # PROBLEM:4
 # ---------
 
+# Conversion of #NA's to NA
+
+customer_360$NumberOfDependents[customer_360$NumberOfDependents=='#N/A']<-NA
+customer_360$MonthlyIncome[customer_360$MonthlyIncome=='#N/A']<-NA
+
 customer_360$MonthlyIncome<-as.numeric(as.character(customer_360$MonthlyIncome))
 customer_360$NumberOfDependents<-as.numeric(as.character(customer_360$NumberOfDependents))
 
-# Dropping the rows have NA's in the list
-customer_360<-customer_360[!(is.na(customer_360$MonthlyIncome) | is.na(customer_360$NumberOfDependents)),]
 
-# View(customer_360)
+# Dropping the rows have NA's in the list
+# customer_360<-customer_360[!(is.na(customer_360$MonthlyIncome) | is.na(customer_360$NumberOfDependents)),]
+
+View(customer_360)
 # str(customer_360)
 
 
@@ -95,10 +101,8 @@ percentile<-function(a){
 }
 
 # Calculating the Percentile score based on monthly income
-customer_360$percentile_score<-percentile(customer_360$MonthlyIncome)
-
-# Converting the list variable into numeric
-customer_360$percentile_score<-as.numeric(customer_360$percentile_score)
+customer_360$percentile_score<-as.numeric(as.character(percentile(customer_360$MonthlyIncome)))
+customer_360$percentile_score[customer_360$percentile_score=='#N/A']<-NA
 
 # Binning the monthly income based on the percentile score calculated for each customer
 customer_360$Income_segment<-cut(customer_360$percentile_score,breaks = c(-Inf,20,40,60,80,Inf),
@@ -106,7 +110,7 @@ customer_360$Income_segment<-cut(customer_360$percentile_score,breaks = c(-Inf,2
                                             'Medium Value Customers','High Value Customers',
                                             'Prime Value Customers'))
 
-# View(customer_360)
+View(customer_360)
 
 
 # PROBLEM:6
@@ -133,7 +137,7 @@ customer_360$State<-sapply(Location,function(x) x[2])
 drop<-c('Location')
 customer_360<-customer_360[,!names(customer_360) %in% drop]
 
-# View(customer_360)
+View(customer_360)
 
 
 # PROBLEM:8
@@ -151,19 +155,35 @@ write.csv(non_delinquent,file = 'E:/R-Programing/RCaseStudy2/non_delinquent.csv'
 # PROBLEM:9
 # ---------
 
-Top_50_Customers<-arrange(customer_360,desc(MonthlyIncome))[1:50,]
+Top_50_Customers<-top_n(customer_360,50,MonthlyIncome)
 View(Top_50_Customers)
 
 
 # PROBLEM:10
 # ----------
 
-#' View(sqldf('Select * from 
-#'            (Select * from customer_360
-#'            state_rank:=if(@current_state=State,@state_rank + 1,1) as state_rank,
-#'            @current_state:=State 
-#'            from customer_360 order by State,MonthlyIncome desc)
-#'            where state_rank<=10'))
-
 Top_10_Customer<-arrange(customer_360,desc(State),desc(MonthlyIncome)) %>% group_by(State) %>% top_n(n=10,wt=MonthlyIncome)
 View(Top_10_Customer)
+
+
+# PROBLEM : 11
+#-------------
+
+customer_360<-mutate(customer_360,Gender=as.factor(Gender),City=as.factor(City),
+                     no_of_30_120_DPD=No_of_30_59_DPD+No_of_90_DPD+No_of_60_89_DPD)
+
+cust_group<-group_by(customer_360,City,Gender)
+
+summary_report = summarise(cust_group,Percent_Delinquency=(sum(no_of_30_120_DPD,na.rm = T)/sum(customer_360$no_of_30_120_DPD,na.rm = T))*100,
+                           Average_Dependents=mean(NumberOfDependents,na.rm = T),
+                           Average_Debt_Ratio=mean(DebtRatio,na.rm = T),
+                           Min_Monthly_Income=range.default(MonthlyIncome,na.rm = T)[1],
+                           Max_Monthly_Income=range.default(MonthlyIncome,na.rm = T)[2],
+                           Min_Age=range.default(age,na.rm = T)[1],
+                           Max_Age=range.default(age,na.rm = T)[2])
+
+View(summary_report)
+
+# PROBLEM : 12
+#-------------
+

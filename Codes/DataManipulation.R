@@ -6,6 +6,10 @@ Vectorize(detach)(name=paste0("package:",c("xlsx","XLConnect")),unload=T,charact
 ?Vectorize()
 
 
+# TRY
+na.omit()
+
+
 #--------------------------------------------------------------#
 
 
@@ -58,7 +62,7 @@ View(stores)
 
 #Method:2
 
-stores<-transform(stores, TotalCost1=AcqCostPercust*Total_Customers + OperatingCost)
+stores<-transform(stores, TotalCost1=AcqCostPercust*Total_Customers + OperatingCost,key=paste(StoreCode, StoreName , sep='-'))
 View(stores)
 
 require(plyr)
@@ -163,13 +167,13 @@ store_sales<-read.table(choose.files(),sep = ',',header = T)
 View(store_sales)
 
 v1<-names(store_sales)[3:13] # Vector of monthly sales column names
-View(v1)
+(v1)
 
 # reshaping wide to long
 store_sales.Wide_Long1<-reshape(store_sales,idvar = c('StoreID','City'),varying = v1 ,timevar = c('Month'),
-                                v.names=c('Sales'),times=c("Jan_Sales","Feb_sales","Mar_sales","Apr_sales",
-                                                           "May_Sales","June_sales","Jul_sales","Aug_sales",
-                                                           "Sep_Sales","Oct_Sales","Nov_Sales" ),direction = 'long')
+                                v.names=c('Sales'),times=c("January","Feburary","March","April",
+                                                           "May","June","July","Aug",
+                                                           "September","October","November" ),direction = 'long')
 
 View(store_sales.Wide_Long1)
 
