@@ -72,8 +72,40 @@ View(sample_dataset1)
 # Problem : 9
 #------------
 
-(count(cust_leftjoin,Martial_Status))
+length(which(cust_leftjoin$Martial_Status=='Married'))
+n_distinct(cust_leftjoin$ID,na.rm = T)
 
 # Problem : 10
 #-------------
+
+# Converting the variable into appropriate datatype
+
+cust_leftjoin<-mutate(cust_leftjoin,Gender=as.factor(Gender),
+                      SeriousDlqin2yrs=as.factor(SeriousDlqin2yrs),
+                      MonthlyIncome=as.numeric(as.character(MonthlyIncome)),
+                      NumberOfDependents=as.numeric(as.character(NumberOfDependents)))
+
+
+# Removing the #NA's from the variables
+cust_leftjoin$NumberOfDependents[cust_leftjoin$NumberOfDependents=='#N/A']<-NA
+cust_leftjoin$MonthlyIncome[cust_leftjoin$MonthlyIncome=='#N/A']<-NA
+
+# Grouping the Dataset based on Gender and SeriousDelinquency
+cust_group<-group_by(cust_leftjoin,Gender,SeriousDlqin2yrs)
+
+# Summarising the variable to create a report
+Summaries_report = summarise(cust_group,NumberOfCustomers=n_distinct(ID),
+        PercentageOfCustomers=(n_distinct(ID)/n_distinct(cust_leftjoin$ID))*100,
+        AverageRevolvingUtilization=mean(RevolvingUtilization,na.rm = T),
+        StandardDeviation=sd(RevolvingUtilization,na.rm=T),
+        AverageIncome=mean(MonthlyIncome,na.rm = T),
+        MaxIncome=max(MonthlyIncome,na.rm = T),
+        SDIncome=sd(MonthlyIncome,na.rm = T),
+        AverageAge=mean(age,na.rm = T),
+        AverageDependents=mean(NumberOfDependents,na.rm = T),
+        NumberOfMarriedCustomer=length(which(Martial_Status=='Married')),
+        PercentMarriedCustomer=
+          (length(which(Martial_Status=='Married'))/length(which(cust_leftjoin$Martial_Status=='Married')))*100)
+
+View(Summaries_report)
 
