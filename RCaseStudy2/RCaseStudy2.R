@@ -187,3 +187,7 @@ View(summary_report)
 # PROBLEM : 12
 #-------------
 
+# Removing rows having duplicate ID's
+customer_360<-customer_360[unique(customer_360$ID),]
+
+str(customer_360)
