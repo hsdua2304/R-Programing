@@ -57,3 +57,30 @@ prop.table(xtabs(stores$TotalSales~stores$Location+stores$StoreType))
 
 require(psych)
 data.frame(stores)
+
+
+# User Defined Function
+
+mystatistics<-function(x){
+  nmiss<-sum(is.na(x))
+  a<-x[!is.na(x)]
+  m<-mean(a)
+  n<-length(a)
+  s<-sd(a)
+  v<-var(a)
+  min<-min(a)
+  q1<-quantile(a,.25)
+  q3<-quantile(a,.75)
+  max<-max(a)
+  UL<-m+3*s
+  LL<-m-3*s
+  outlier_flag<-max>UL | min<LL
+  
+  return(c(n=n,nmiss=nmiss,outlier_flag=outlier_flag,mean=m,stdev=s,min=min,max=max,UL=UL,LL=LL))
+}
+
+mystats(stores$OperatingCost)
+data_audit_report<-data.frame(t(apply(stores[6:15],2,mystatistics)))
+View(data_audit_report)
+
+

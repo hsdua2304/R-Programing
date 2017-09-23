@@ -191,3 +191,39 @@ View(summary_report)
 customer_360<-customer_360[unique(customer_360$ID),]
 
 str(customer_360)
+
+customer_360$State<-as.factor(customer_360$State)
+customer_360$Own_House<-as.factor(customer_360$Own_House)
+customer_360$SeriousDlqin2yrs<-as.factor(customer_360$SeriousDlqin2yrs)
+
+numerical_stats<-function(x){
+  nmiss<-sum(is.na(x))
+  a<-x[!is.na(x)]
+  m<-mean(a)
+  n<-length(a)
+  s<-sd(a)
+  v<-var(a)
+  min<-min(a)
+  p1<-quantile(a,.01)
+  p5<-quantile(a,.05)
+  p10<-quantile(a,.10)
+  q1<-quantile(a,.25)
+  q2<-quantile(a,.50)
+  q3<-quantile(a,.75)
+  p90<-quantile(a,.90)
+  p95<-quantile(a,.95)
+  p99<-quantile(a,.99)
+  max<-max(a)
+  # UL<-m+3*s
+  # LL<-m-3*s
+  # outlier_flag<-max>UL | min<LL
+  
+  return(c(n=n,nmiss=nmiss,mean=m,stdev=s,var=v,min=min,p=p1,p=p5,p=p10,q1=q1,q2=q2,
+           q3=q3,p_90=p90,p95=p95,p99=p99,max=max))
+}
+
+numerical_statistics<-select(customer_360,c(3,5,6,7,9,12,14,22))
+numerical_stat_report<-data.frame(t(apply(numerical_statistics,2,numerical_stats)))
+View(numerical_stat_report)
+
+
