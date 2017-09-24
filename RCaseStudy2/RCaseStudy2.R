@@ -227,3 +227,11 @@ numerical_stat_report<-data.frame(t(apply(numerical_statistics,2,numerical_stats
 View(numerical_stat_report)
 
 
+categorical_stats<-function(x){
+  nmiss<-sum(is.na(x))
+  a<-x[!is.na(x)]
+  n<-length(a)
+  
+  
+}
+
