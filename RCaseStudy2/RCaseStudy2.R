@@ -232,6 +232,6 @@ categorical_stats<-function(x){
   a<-x[!is.na(x)]
   n<-length(a)
   
-  
+  return(c(missing=nmiss)
 }
 
