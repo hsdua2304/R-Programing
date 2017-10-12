@@ -34,19 +34,19 @@ describe(data)
 
 # UNIVARIATE
 
-s1<-table(stores$StoreType)
+s1<-table(stores$StoreType) #For frequency count for the categorical variables
 View(s1)
-s2<-prop.table(s1)
+s2<-prop.table(s1) #Probability count for the categorical variable
 View(s2)
 s2<-prop.table(table(stores$StoreType))
 View(s2)
-rbind(s1,s2)
-cbind(s1,s2)
+rbind(s1,s2) #combining row wise
+cbind(s1,s2) #combining Columns wise
 
 # install.packages('gmodels',dependencies = T)
 require(gmodels)
 
-CrossTable(stores$StoreType)
+CrossTable(stores$StoreType) #Combination of table() and prop.table()
 
 # BIVARIATE
 
@@ -58,6 +58,7 @@ CrossTable(stores$StoreType,stores$Location,prop.r=F,prop.c=F,prop.chisq = F)
 
 install.packages('vcd',dependencies = T)
 require(vcd)
+
 
 xtabs(~stores$Location+stores$StoreType)
 xtabs(stores$TotalSales~stores$Location+stores$StoreType)
@@ -95,3 +96,68 @@ data_audit_report<-data.frame(t(apply(stores[6:15],2,mystatistics)))
 View(data_audit_report)
 
 
+# Descriptive Statistics by Group
+
+require(psych)
+# Method1
+by(stores[c("OperatingCost","Total_Customers")],stores$OnlinePresence,
+   summary)
+by(stores,stores$StoreSegment,summary)
+by(stores,stores$StoreSegment,describe)
+
+# by(stores$TotalSales,stores$StoreSegment,mean)
+# ?by()
+
+# Method-2
+
+describe.by(stores,group = stores$Location)
+describeBy(stores,group = stores$Location)
+
+
+# Method-3
+
+install.packages('doBy',dependencies = T)
+require(doBy)
+
+summaryBy(TotalSales + ProfitPercust ~ Location + StoreSegment,data = stores,
+          FUN = mean())
+
+# Method-4
+
+tapply(stores$TotalSales,stores$StoreType,mean)
+tapply(stores$TotalSales,list(stores$StoreType,stores$Location),mean)
+tapply(stores$TotalSales,list(stores$StoreType,stores$Location,
+                              stores$OnlinePresence),mean)
+
+# Method-5
+
+aggregate(TotalSales~StoreType+Location,stores,FUN=mean)
+
+
+# Method-6
+
+require(dplyr)
+
+gg <- group_by(stores,Location, StoreType)
+cdata <- summarise(gg,
+                   N = sum(!is.na(TotalSales)),
+                   mean = mean(TotalSales, na.rm=TRUE),
+                   sd = sd(TotalSales, na.rm=T),
+                   se = sd / sqrt(N))
+
+View(cdata)
+
+
+
+# CORRELATION
+
+# correlation between two variables
+cor(stores$BasketSize,stores$TotalSales)
+
+# Correlation Matrix
+
+install.packages('corrplot')
+require(corrplot)
+
+corrplot(cor(stores[,5:10],use="pairwise.complete.obs"),method = 'number',
+         tl.cex = 0.5)
