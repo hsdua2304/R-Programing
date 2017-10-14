@@ -161,3 +161,13 @@ require(corrplot)
 
 corrplot(cor(stores[,5:10],use="pairwise.complete.obs"),method = 'number',
          tl.cex = 0.5)
+
+# Calculate total number of missing values in dataset in each varibable
+
+sapply(stores,function(x){sum(is.na(x))})
+View(stores)
+
+# Getting all numeric and Factor variables
+
+names(stores)[sapply(stores, FUN = is.numeric)]
+names(stores)[sapply(stores,FUN = is.factor)]
