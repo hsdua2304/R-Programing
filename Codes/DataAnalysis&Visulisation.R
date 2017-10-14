@@ -171,3 +171,89 @@ View(stores)
 
 names(stores)[sapply(stores, FUN = is.numeric)]
 names(stores)[sapply(stores,FUN = is.factor)]
+
+
+# VISUALIZATION
+
+# Barplot with one variable
+
+# Method-1 : using graphics package
+one_var_table <- table(stores$StoreSegment)
+
+barplot(one_var_table,main='Bar Plot',xlab = 'Count',ylab = 'StoreSegment',
+        horiz=T, col = c('green','yellow','red'))
+
+barplot(one_var_table,main='Bar Plot',xlab = 'StoreSegment',ylab = 'Count',
+        col = c('green','yellow','red','blue'))
+
+# Method-2 : using ggplot
+require(ggplot2)
+plot <- ggplot(data = stores,aes(x = StoreSegment))
+plot + geom_bar(stat = 'bin')
+plot + geom_bar(fill='black',colour='red',binwidth = 0.7)
+plot + geom_bar(fill='violet',colour='black',binwidth = 0.5) + coord_flip()
+
+ggplot(data = stores,aes(x=StoreSegment)) + geom_bar(stat='bin',fill='red',colour='black',
+                                                  binwidth = 0.5) + coord_flip()
+
+
+# Bar plot with Two variables
+
+# Method-1 : using graphics package
+
+two_var_tables <- table(stores$OwnStore,stores$StoreSegment)
+
+barplot(two_var_tables,main='Stacked Chart',legend=c('Own','Rented'),beside = F,
+        col = c('red','green'),width=10,args.legend = list(title='OwnStore',x='topright',cex=0.6),
+        ylim = c(0,15),xlab = 'Store Segemnt',ylab = 'Count')
+
+# Method-2 : using graphics package
+
+plot <- ggplot(data = stores,aes(x=StoreSegment,fill=factor(OwnStore)))
+plot + geom_bar(stat = 'bin',position = 'stack',binwidth = 0.5)
+plot + geom_bar(stat = 'bin',position = 'dodge',binwidth = 0.5)
+plot + geom_bar(stat = 'bin',position = 'dodge',binwidth = 0.5)+facet_wrap(~OwnStore)
+
+
+ggplot(data = stores,aes(x=StoreSegment,fill=factor(OwnStore))) + 
+  geom_bar(stat = 'bin',position = 'dodge',binwidth = 0.5) +
+  scale_fill_discrete(name='OwnStore')
+?scale_fill_discrete()
+
+
+# PIE CHART
+
+# Method-1 : using Graphics Package
+pie_table <- table(stores$StoreSegment)
+pie(pie_table)
+Percent = prop.table(pie_table)
+pie(pie_table,main = 'Pie Chart',labels = paste0(names(pie_table),'\n','(',round(Percent*100,2),'%)'))
+
+
+# Method-2 : using ggplot
+
+pie.plot <- ggplot(data = stores,aes(x=factor(1),fill=factor(StoreSegment)))
+pie.plot + geom_bar(width = 1) + coord_polar() + labs(title = 'Pie Charts',x='Segment')
+
+
+#HISTOGRAMS
+
+hist(stores$TotalSales,freq = F,col = 'red',main = 'Histogram',
+     xlab = 'TotalSales',ylab = 'Freq')
+lines(density(stores$TotalSales),col = 'blue')
+
+# Method-2 : using ggplot
+
+
+
+# BOXPLOT
+
+boxplot(stores$TotalSales,col = 'blue')
+
+
+
+
+
+# SCATTER PLOT
+
+plot(stores$TotalSales,stores$BasketSize,pch=19,col='blue')
