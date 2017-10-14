@@ -192,10 +192,15 @@ customer_360<-customer_360[unique(customer_360$ID),]
 
 str(customer_360)
 
+# Converting the following datatype into factor variable
 customer_360$State<-as.factor(customer_360$State)
 customer_360$Own_House<-as.factor(customer_360$Own_House)
 customer_360$SeriousDlqin2yrs<-as.factor(customer_360$SeriousDlqin2yrs)
 
+num_var <- names(customer_360)[sapply(customer_360, FUN = is.numeric)]
+cat_var <- names(customer_360)[sapply(customer_360,FUN = is.factor)]
+
+# Summerization for the numerical datatypes
 numerical_stats<-function(x){
   nmiss<-sum(is.na(x))
   a<-x[!is.na(x)]
@@ -222,16 +227,44 @@ numerical_stats<-function(x){
            q3=q3,p_90=p90,p95=p95,p99=p99,max=max))
 }
 
-numerical_statistics<-select(customer_360,c(3,5,6,7,9,12,14,22))
+numerical_statistics<-select(customer_360,num_var)
 numerical_stat_report<-data.frame(t(apply(numerical_statistics,2,numerical_stats)))
 View(numerical_stat_report)
 
-
+# Summarization for the categorical variables
 categorical_stats<-function(x){
   nmiss<-sum(is.na(x))
   a<-x[!is.na(x)]
   n<-length(a)
   
-  return(c(missing=nmiss)
+  return(c(missing=nmiss,Total=n))
+}
+categorical_statistics <- select(customer_360,cat_var)
+categorical_stat_report <- data.frame(t(apply(categorical_statistics,2,categorical_stats)))
+View(categorical_stat_report)
+
+
+# 13. Finding missing values and removing missing with mean and mode
+# for numerical and categorical variables respectively
+
+Mode <- function (x, na.rm) {
+  xtab <- table(x)
+  xmode <- names(which(xtab == max(xtab)))
+  if (length(xmode) > 1) xmode <- xmode[1]
+  return(xmode)
 }
 
+
+for (var in 1:ncol(customer_360)) {
+  if (is.numeric(class(customer_360[,var]))) {
+    customer_360[is.na(customer_360[,var]),var] <- mean(customer_360[,var], na.rm = TRUE)
+  } else if (class(customer_360[,var]) %in% c("character", "factor")) {
+    customer_360[is.na(customer_360[,var]),var] <- Mode(customer_360[,var], na.rm = TRUE)
+  }
+}
+
+
+# 14. Outlier Treatment
+
+boxplot(numerical_statistics,col = 'blue')
+names(numerical_statistics)

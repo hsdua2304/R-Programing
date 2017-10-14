@@ -257,3 +257,17 @@ boxplot(stores$TotalSales,col = 'blue')
 # SCATTER PLOT
 
 plot(stores$TotalSales,stores$BasketSize,pch=19,col='blue')
+
+
+
+# RMARKDOWN
+
+install.packages('rmarkdown',dependencies = T)
+install.packages('markdown',dependencies = T)
+install.packages('knitr',dependencies = T)
+
+require(rmarkdown)
+require(markdown)
+require(knitr)
+
+render('E:/R-Programing/Codes/RMarkDownFirst.Rmd')

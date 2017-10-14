@@ -105,3 +105,15 @@ range(x)
 range(x, na.rm = TRUE)
 range(x, na.rm=T, finite = TRUE)
 x[1]
+
+
+sapply(stores,function(x){sum(is.na(x))})
+View(stores)
+
+names(stores)[sapply(stores, FUN = is.numeric)]
+names(stores)[sapply(stores,FUN = is.factor)]
+
+
+install.packages('rmarkdown',dependencies = T)
+install.packages('markdown',dependencies = T)
+install.packages('knitr',dependencies = T)
