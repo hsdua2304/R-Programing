@@ -1,0 +1,90 @@
+---
+title: "TelecomAnalysis-Churn"
+author: "Harmandeep Singh"
+date: "14 November 2017"
+output:
+  pdf_document: default
+  html_document: default
+---
+**Business Context**: Cell voice is one of the leading telecom providers. Customers of "Cell-Voice" are enrolled into one of 4 customer segments (customer categories) based on their billing and behavioural patterns.
+
+1. Basic Service
+2. E-Service
+3. Plus Service
+4. Total Service
+
+The company is suffering from high attrition amongst its subscriber base. It wishes to launch an attrition management program which will target high risk customers. In order to understand the customers' behaviour and drivers of churn, the marketing team would like to perform the below analysis. 
+
+The customer database contains demographic information (this information collected at the time of application) as well as Transactional details (i.e. usage, billing, enrolled plans etc). You can find the detailed variable description in next page. 
+
+## Step-1 - Importing the Data
+```{r setup, include=TRUE}
+
+setwd("E:/R-Programing/TelecomAnalysis-Churn/")
+cust_demo <- read.csv("cellvoice_demo.csv")
+cust_trans <- read.csv("cellvoice_trans.csv")
+```
+
+## Step-2 - Understanding the data - Customer deomographics
+
+```{r,echo=FALSE}
+str(cust_demo)
+summary(cust_demo)
+head(cust_demo)
+tail(cust_demo)
+names(cust_demo)
+
+
+```
+## Step-2 Understanding the Data - Customer Transaction
+
+```{r}
+str(cust_trans)
+summary(cust_trans)
+names(cust_trans)
+head(cust_trans)
+tail(cust_trans)
+```
+
+## Step-3 Creating Customer 360
+```{r}
+require(dplyr)
+cust_360 = cust_demo %>% left_join(cust_trans,by='CustID')
+
+```
+###**Analysis-1**
+The marketing team would like to have high level summary of the data as follows. 
+1. Identify which age group (from the below groups) have highest churn and what is percentage of churn.
+  a. <=25
+  b. 25-35
+  c. 35-45
+  d. 45-60
+  e. >60
+```{r}
+cust_360<-cust_360 %>% mutate(age_seg = ifelse(age>60,"60+",ifelse(age>45 & age <60,"45-60",ifelse(age>35 & age<45,"35-45",ifelse(age>25 & age<35,"25-35","<25")))))
+
+summary1 <- cust_360 %>% group_by(age_seg) %>% summarise(churn_cnt = sum(churn)) %>% ungroup() %>% mutate(churn_pct = churn_cnt/sum(churn_cnt))
+
+data.frame(summary1)
+```
+*Based on the above analysis age group 25-35 has highest churn rate i.e 35%*
+
+2. Summarize the data as follows at region and education level.
+  a. Number of customers
+  b. Number of churners
+  c. Percentage of churners
+  d. Average income
+  e. Average Tenure
+  f. Total revenue (Total revenue = longmon+tollmon+equipmon+cardmon+wiremon)
+  
+  
+```{r}
+summary2 <- cust_360 %>% group_by(region,ed) %>% summarise(TotalCust=n(),
+                                                           TotalChurners=sum(churn),
+                                                           PercentChurn=TotalChurners/TotalCust,
+                                                           AverageIncome=mean(income,na.rm=T),
+                                                           AverageTenure=mean(tenure,na.rm=T),
+                                                           TotalRevenue=sum((longmon+tollmon + equipmon
+                                                                                   +cardmon+wiremon), na.rm = T))
+data.frame(summary2)
+```

@@ -30,7 +30,7 @@ m<-c()
 
 ?split()
 
-d<-customer_360
+d<-cu_360
 str<-as.character(d$Location)
 str(str)
 str<-strsplit(str,split=',')
@@ -117,3 +117,45 @@ names(stores)[sapply(stores,FUN = is.factor)]
 install.packages('rmarkdown',dependencies = T)
 install.packages('markdown',dependencies = T)
 install.packages('knitr',dependencies = T)
+
+
+Mode <- function (x, na.rm) {
+  xtab <- table(x)
+  xmode <- names(which(xtab == max(xtab)))
+  if (length(xmode) > 1) xmode <- xmode[1]
+  return(xmode)
+}
+
+xtab <- table(stores$StoreType)
+xmode <- names(which(xtab == max(xtab)))
+length(xmode)
+xmode
+cu_360 <- stores
+for (var in 1:ncol(cu_360)) {
+  if (class(cu_360[,var])=="numeric") {
+    cu_360[is.na(cu_360[,var]),var] <- mean(cu_360[,var], na.rm = TRUE)
+  } else if (class(cu_360[,var]) %in% c("character", "factor")) {
+    cu_360[is.na(cu_360[,var]),var] <- Mode(cu_360[,var], na.rm = TRUE)
+  }
+}
+
+View(cu_360)
+
+boxplot(stores$ProfitPercust,col = 'blue')
+
+fun <- function(x,na.rm=T){
+  quantiles <- quantile( x, c(.25, .75 ) )
+  x[ x < quantiles[1] ] <- quantiles[1]
+  x[ x > quantiles[2] ] <- quantiles[2]
+  x
+}
+
+fun(stores$ProfitPercust)
+
+
+
+x <- stores$ProfitPercust
+qnt <- quantile(x, probs=c(.25, .75), na.rm = T)
+caps <- quantile(x, probs=c(.05, .95), na.rm = T)
+H <- 1.5 * IQR(x, na.rm = T)
+x[x < (qnt[1] - H)  (qnt[2] + H)] <- caps[2]

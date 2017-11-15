@@ -256,7 +256,7 @@ Mode <- function (x, na.rm) {
 
 
 for (var in 1:ncol(customer_360)) {
-  if (is.numeric(class(customer_360[,var]))) {
+  if (class(customer_360[,var])=='numeric') {
     customer_360[is.na(customer_360[,var]),var] <- mean(customer_360[,var], na.rm = TRUE)
   } else if (class(customer_360[,var]) %in% c("character", "factor")) {
     customer_360[is.na(customer_360[,var]),var] <- Mode(customer_360[,var], na.rm = TRUE)
@@ -266,5 +266,7 @@ for (var in 1:ncol(customer_360)) {
 
 # 14. Outlier Treatment
 
-boxplot(numerical_statistics,col = 'blue')
-names(numerical_statistics)
+
+# 15. Relationship Between Variable
+
+
