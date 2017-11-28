@@ -88,3 +88,85 @@ summary2 <- cust_360 %>% group_by(region,ed) %>% summarise(TotalCust=n(),
                                                                                    +cardmon+wiremon), na.rm = T))
 data.frame(summary2)
 ```
+###**Analysis-2**
+The marketing team would like to test/verify the following claims. 
+1. Younger subscribers are more likely to churn as compared to older customers
+2. Gender has no impact on Churn
+3. Male subscribers are significantly older than females
+4. Customer category has no impact on Churn
+5. Customer categories show no gender bias
+6. The longer a customer stays in the same address, less likely  to churn
+7. Marital status affects the level of education of subscriber
+8. Retired customers are more loyal
+9. Test the impact of the following services on Churn
+  o Toll free service
+  o Equipment rental
+  o Calling card service
+  o Wireless service
+10. Is there a regional impact on churn 
+
+```{r}
+### 1. Yes, Younger age group is more likely to churn
+summarise(cust_360,avg = mean(churn,na.rm=T))
+
+fit_age <- aov(churn ~ age_seg,data=cust_360)
+
+summary(fit_age)
+
+cust_360%>%group_by(age_seg)%>%
+  summarise(tot_cust = n(),
+            avg = mean(churn))
+
+
+
+### 2. Gender has no impact
+
+
+cust_360 %>% group_by(gender) %>% summarise(tot_cust = n(),
+            avg = mean(churn))
+
+### 3. No impact
+
+cust_360 %>% group_by(gender) %>% summarise(tot_cust = n(),avg_age = mean(age))
+
+### 4. 
+
+fit_cust_cat <- aov(churn ~ custcat , data = cust_360)
+summary(fit_cust_cat)
+
+cust_360 %>% group_by(custcat) %>% summarise(tot_cust = n(), avg = mean(churn))
+
+### 5. Customer category vs gender bias
+require(gmodels)
+cust_360 %>% group_by(custcat,gender) %>% summarise(totalCustomer = n())
+
+
+CrossTable(cust_360$custcat , cust_360$gender)
+
+### 6. Reside and churn
+
+cust_360 %>% group_by(address) %>% summarise(totalCustomer = n(),avg=mean(churn))
+
+
+### 7. Maritial Status and Education Level
+
+cust_360 %>% group_by(ed,marital) %>% summarise(totalCustomer=n()) 
+
+### 8. Retire and Churn
+##Churn Rate is Less in Retire Customer
+
+cust_360 %>% group_by(retire) %>% summarise(totalCustomer=n(),avg=mean(churn))
+
+### 9. Tollfree service have no effect on churn rate; Others do
+
+cust_360 %>% group_by(tollfree) %>% summarise(totalCustomer=n(),avg=mean(churn))
+cust_360 %>% group_by(equip) %>% summarise(totalCustomer=n(),avg=mean(churn))
+cust_360 %>% group_by(callcard) %>% summarise(totalCustomer=n(),avg=mean(churn))
+cust_360 %>% group_by(wireless) %>% summarise(totalCustomer=n(),avg=mean(churn))
+
+
+### 10. No impact
+
+cust_360 %>% group_by(region) %>% summarise(totalCustomer=n(),avg=mean(churn))
+```
+

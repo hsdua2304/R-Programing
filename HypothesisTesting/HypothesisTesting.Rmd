@@ -1,0 +1,108 @@
+---
+title: "HypothesisTesting"
+author: "Harmandeep Singh"
+date: "27 November 2017"
+output: html_document
+---
+```{r,echo=FALSE}
+cust_seg <- read.csv("E:/R-Programing/HypothesisTesting/cust_seg.csv")
+
+```
+# Case Study - 3
+#### The dataset(cust_seg) is informstion of 200 customers who were part of the last campaign conducted by one of the major bank credit card division.
+
+#### **Problem-1 :** Card Usage has been improved significantly from the last year usage which is 50
+
+**Solution :**  One sample T-Test  
+            Ho : Sample Average = 50  
+            Ha : Sample Average <> 50  
+```{r}
+t.test(cust_seg$Post_usage_1month,mu=50)
+```
+#### *Conclusion :*  
+P-Value < 0.05  
+At 95% Confidence Level we can Reject Null Hypothesis.  
+*Therefore, we can say that the average spends has been inceased from last year.*  
+  
+
+#### **Problem-2 : ** Last campaign was successful in terms of Credit card usage.
+
+**Solution : ** Two Sample T-Test  
+
+Ho : Pre-Average = Post-Average  
+Ha : Pre-Average <> Post-Average  
+
+```{r}
+t.test(cust_seg$Post_usage_1month,cust_seg$pre_usage,paired = TRUE)
+```
+
+#### *Conclusion :*  
+P-Value > 0.05  
+At 95% Confidence Level we cannot Reject Null Hypothesis.  
+*Therefore, Pre usage of credit card if not much affected by the campaign. As a result last campaign was not successful.  *
+
+
+#### **Problem-3 : ** Is there any diffrence between males and females in terms of Credit card Usage.
+
+**Solution** : Independent Group Test - Compare means for the two different samples  
+Ho : Average spend of males = Average spend of females  
+Ha : Average spend of males <> Average spend of females                
+
+```{r}
+t.test(Latest_mon_usage ~ sex, data = cust_seg, var.equal = TRUE)
+```
+
+P-Value > 0.05  
+At 95% confidence level we cannot reject the null Hypothesis.  
+*Therefore, Difference between credit card usage of Males and females is not different*  
+
+
+#### **Problem-4 : ** Is there any difference between segments of customers in terms of credit card usage
+<!--Annova : F Statistics-->
+
+**Solution** : Multiple sample test : Comapring means of different segment of customer.  
+Ho : Segment-1 = Segment-2 = Segment-3  
+Ha : Segment-1 <> Segment-2 <> Segment-3  
+
+```{r}
+Anova_Segment = aov(Latest_mon_usage ~ segment,data=cust_seg)
+summary(Anova_Segment)
+```
+
+*Conclusion : *
+*F-Value is high, P-Value is low < 0.05  *  
+*P-Value is low, We can reject null hypothesis  *  
+
+**Therefore, there is difference between segments of customers in terms of credit card usage**
+
+```{r,echo=FALSE}
+model.tables(Anova_Segment,"means")
+
+```
+
+#### **Problem-5 :** Is there any relationship between Region and Segment  
+
+**Solution : ** ChiSquare test : Comparing two catogorical variables.  
+Ho : There is no relationship  
+Ha : There is relationship  
+
+```{r}
+chisq.test(cust_seg$region,cust_seg$segment)
+```
+
+P-value < 0.05  
+Therefore, We can say that there is some relationship between the region and segment
+
+```{r,echo=FALSE}
+tab <- xtabs(~region + segment, data = cust_seg)
+tab
+```
+
+
+#### **Problem-6 : ** Is there any relationship between latest month and pre usage
+
+```{r}
+cor.test(cust_seg$Latest_mon_usage,cust_seg$pre_usage, use="pairwise.complete.obs")
+```
+
+Latest month Usage and Pre Usage is correlated with each other.
