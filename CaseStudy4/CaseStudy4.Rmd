@@ -1,0 +1,238 @@
+---
+title: "CaseStudy4-Analytics With R"
+author: "Harmandeep Singh"
+date: "28 November 2017"
+output: html_document
+---
+
+### **Case Study 4 - Analtytics with R**
+
+#### **Problem - 1** : A physician is evaluating a new diet for her patients with a family history of heart disease. To test the effectiveness of this diet, 16 patients are placed on the diet for 6 months. Their weights and triglyceride levels are measured before and after the study, and the physician wants to know if either set of measurements has changed.  
+
+#### **Solution**  : Paired Sample T-Test : tg0 - tg4 and wt0 - wt4
+
+```{r,echo=FALSE}
+dietStudy <- read.csv('E:/R-Programing/CaseStudy4/dietstudy.csv')
+
+head(dietStudy)
+```
+*Hypothesis*  
+Ho : There is no difference between the Pre and Post measurements.  
+Ha : There is difference between the Pre and Post measurements.  
+
+```{r}
+# triglyceride levels
+t.test(dietStudy$tg0,dietStudy$tg4,paired = TRUE)
+```
+#### **Conclusion**  
+P-Value = 0.2487 > 0.05  
+Therefore, at 95% confidence level we can say that the diet paln doesn't help to reduce the triglyceride levels of the patient
+
+```{r}
+# Weights
+t.test(dietStudy$wgt0,dietStudy$wgt4,paired = TRUE)
+
+```
+#### **Conclusion**  
+P-Value = 0.0000000138 < 0.05  
+Therefore, at 95% confidence level we can say that the diet plan helps in reducing the Weights of the Patient.  
+8.0625 pounds of weight is reduce on average.  
+
+  
+#### **Problem-2** : An analyst at a department store wants to evaluate a recent credit card promotion. To this end, 500 cardholders were randomly selected. Half received an ad promoting a reduced interest rate on purchases made over the next three months, and half received a standard seasonal ad. Is the promotion effective to increase sales?  
+
+```{r,echo=FALSE}
+creditpromo <- read.csv('E:/R-Programing/CaseStudy4/creditpromo.csv')
+
+head(creditpromo)
+```
+#### **Solution** : Independent Group Test :New Promotion ad vs Standard Seasonal ad  
+
+*Hypothesis*  
+Ho : There is no effect of New Promotion ad.  
+Ha : There is effect of New Promotion ad.  
+
+```{r}
+t.test(dollars ~ insert,data = creditpromo)
+
+```
+#### **Conclusion**  
+
+P-value = 0.02423 < 0.05  
+Therefore, at 95% confidence interval we can say that New Promotion has increased the overall sales.  
+
+Average Sales in New Promotion ad : 1637.5  
+Average Sales in Standard Seasonal ad : 1566.389 
+
+  
+#### **Problem-3** : An experiment is conducted to study the hybrid seed production of bottle gourd under open field conditions. The main aim of the investigation is to compare natural pollination and hand pollination. The data are collected on 10 randomly selected plants from each of natural pollination and hand pollination. The data are collected on fruit weight (kg), seed yield/plant (g) and seedling length (cm). (Data set: pollination.csv)  
+a. Is the overall population of Seed yield/plant (g) equals to 200?  
+b. Test whether the natural pollination and hand pollination under open field conditions are equally effective or are significantly different.  
+c. Test whether hand pollination is better alternative in comparison to natural pollination. 
+
+```{r,echo=FALSE}
+pollination <- read.csv('E:/R-Programing/CaseStudy4/pollination.csv')
+
+head(pollination)
+```
+#### **Solution**:  
+
+*a. Is the overall population of Seed yield/plant (g) equals to 200?*  
+
+*Hytpothesis*  
+Ho : Overall population of Seed yield/plant = 200  
+Ha : Overall population of seed yield/plant <> 200  
+
+```{r}
+t.test(pollination$Seed_Yield_Plant,mu=200)
+```
+
+#### **Conclusion**  
+P-value = 0.03289 < 0.05  
+Therefore, we can reject null hypothesis.  
+At 95% confidence interval we can say that the overall population of seed yield/plant is not equal to 200.  
+Mean of Seed yield/plant  = 180.8035 
+  
+*b. Test whether the natural pollination and hand pollination under open field conditions are equally effective or are significantly different.*
+
+*Hypothesis*  
+Ho : Natural Pollination and Hand Polliation is equally effective  
+Ha : Natural Pollination and Hand Polliation is significantly different  
+
+```{r}
+t.test(Fruit_Wt ~ Group,data = pollination)
+t.test(Seed_Yield_Plant ~ Group,data = pollination)
+t.test(Seedling_length ~ Group,data = pollination)
+```
+
+#### **Conclusion**
+
+Statistic | Mean Hand Pollination  | Mean Natural Pollination | P-Value
+--------- | ---------------------  | ------------------------ | -------
+Fruit Wt  | 2.566                  |  1.848                   | 0.000000004307
+Seed_Plant| 215.598                |  146.009                 | 0.000000000005136
+SeedlingLength  | 18.590           |  17.707                  | 0.02143
+
+From the above statistic we can say that the Natural Pollination is significantly different from the Hand pollination.  
+
+
+*c. Test whether hand pollination is better alternative in comparison to natural pollination.*  
+
+**From the above statisics we can say that Hand Pollination is better than Natural Pollination.**
+
+
+#### **Problem:4**: An electronics firm is developing a new DVD player in response to customer requests. Using a prototype, the marketing team has collected focus data for different age groups viz. Under 25; 25-34; 35-44; 45-54; 55-64; 65 and above. Do you think that consumers of various ages rated the design differently?  
+
+```{r,echo=FALSE}
+dvdplayer <- read.csv('E:/R-Programing/CaseStudy4/dvdplayer.csv')
+
+head(dvdplayer)
+```
+
+#### **Solution**: Anova Statistics
+
+*Hypothesis*  
+Ho : Consumers of various ages rated the design equally  
+Ha : Consumers of various ages rated the design differently  
+
+```{r}
+Anova_Segment <- aov(dvdscore ~ agegroup,data = dvdplayer)
+summary(Anova_Segment)
+```
+
+#### **Conclusion**  
+P Value = 0.0000309 < 0.05  
+At 95% confidence level we can reject the Null hypothesis  
+
+#### **Problem-5**:A trial was designed to evaluate 15 rice varieties grown in soil with a toxic level of iron. Guard rows of a susceptible check variety were planted on two sides of each experimental plot. Scores for tolerance for iron toxicity were collected from each experimental plot as well as from guard rows. Data on the tolerance score of each variety and on the score of the corresponding susceptible check are captured. (Data set: tolerance.csv).  
+a. Are all the varieties having same tolerance?  
+b. What difference in result you are observing after using susceptible check as covariates in the analysis  
+
+#### **Solution**:
+
+```{r,echo=FALSE}
+tolerance <- read.csv('E:/R-Programing/CaseStudy4/tolerance.csv')
+
+```
+*Hypothesis*  
+Ho : All varieties have same tolerance level  
+Ha : All varieties not have same tolerance level  
+
+```{r}
+AOV <- aov(Tol_Score ~ Variety,data=tolerance)
+
+summary(AOV)
+```
+
+#### **Conclusion**  
+From the above test P-Value > 0.05.  
+Therefore, we cannot reject the Null Hypothesis.  
+
+
+
+#### **Problem-6**:A survey was conducted among 2800 customers on several demographic characteristics. Working status, sex, age, age-group, race, happiness, no. of child, marital status, educational qualifications, income group etc. had been captured for that purpose. (Data set: sample_survey.csv).  
+a. Is there any relationship in between labour force status with marital status?  
+b. Do you think educational qualification is somehow controlling the marital status?  
+c. Is happiness is driven by earnings or marital status?  
+
+```{r,echo=FALSE}
+survey <- read.csv('E:/R-Programing/CaseStudy4/sample_survey.csv')
+```
+*a. Is there any relationship in between labour force status with marital status? *
+
+```{r}
+chisq.test(survey$wrkstat,survey$marital)
+
+xtabs(~wrkstat + marital,data = survey)
+```
+```{r,echo=FALSE}
+ggplot(data = survey,aes(x = wrkstat,fill = factor(marital))) + geom_bar() + coord_flip()
+
+```
+
+#### **Conclusion**  
+The above chart shows maximum number of people working full time are Married or Divorced or Never Married  
+
+*b. Do you think educational qualification is somehow controlling the marital status?*  
+*Hypothesis*  
+Ho : There is no relationship between education qualification and marital status  
+Ha : There is relationship between education qualification and marital status  
+
+```{r}
+chisq.test(survey$educ,survey$marital)
+xtabs(~educ + marital,data = survey)
+```
+
+```{r,echo=FALSE}
+ggplot(data = survey,aes(x=educ,fill=factor(marital)))+geom_bar()
+```
+
+#### **Conclusion**  
+From the above statistics P-Value is less than 0.05. Therefore, we can reject null hypothesis.  
+The above statistics shows that most of the married people lies within 12-16 education level.  
+
+*c. Is happiness is driven by earnings or marital status?*  
+
+
+```{r}
+chisq.test(survey$marital,survey$happy)
+xtabs(~happy + marital,data = survey)
+```
+
+```{r,echo=FALSE}
+require(ggplot2)
+
+ggplot(data = survey,aes(x=marital,fill=factor(happy))) + geom_bar()
+```
+
+```{r}
+chisq.test(survey$income,survey$happy)
+xtabs(~income + happy,data = survey)
+```
+
+```{r,echo=FALSE}
+ggplot(data = survey,aes(x=income,fill=factor(happy)))+geom_bar()+coord_flip()
+```
+
+#### **Conclusion**  
+From the above statistics Married people are more Pretty happy or Very Happy. Also, people with salary greater than equal to $25000 are Very Happy or Pretty Happy.
