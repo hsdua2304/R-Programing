@@ -268,5 +268,22 @@ for (var in 1:ncol(customer_360)) {
 
 
 # 15. Relationship Between Variable
+View(customer_360)
+
+t.test(MonthlyIncome ~ Gender,data = customer_360)
+## Since, Pvalue > 0.05 therefore we can say that Average Monthly income of Male and Female is not different.
+
+t.test(MonthlyIncome ~ Martial_Status,data = customer_360)
+## Since, PValue < 0.05 therefore we can say that Average Monthly Income of Single is greater than Married People.
+
+AOV_Segment <- lm(MonthlyIncome ~ Life_Stage_Segment,data = customer_360)
+anova(AOV_Segment)
+
+model.tables(AOV_Segment,"means",na.rm=T)
+
+## Since, P-Value <0.05 Therefore, we can say that Life Stage Segment depends upon the Monthly Income.
 
 
+chisq.test(customer_360$Gender,customer_360$Income_segment)
+
+xtabs(~Gender+Income_segment,data = customer_360)
