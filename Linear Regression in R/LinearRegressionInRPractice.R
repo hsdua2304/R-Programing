@@ -68,3 +68,58 @@ carSales$Vehicle_type <- factor(carSales$Vehicle_type)
 install.packages('corrplot')
 require(corrplot)
 corrplot(cor(carSales[, vars],use="pairwise.complete.obs"), method = "circle", tl.cex = 0.7)
+
+
+# Creating training and Testing Dataset
+
+sampleSize <- floor(0.70*nrow(carSales))
+set.seed(123)
+
+trainIndex <- sample(seq_len(nrow(carSales)),size = sampleSize)
+#seq_len(nrow(carSales))
+
+train <- carSales[trainIndex,]
+test <- carSales[-trainIndex,]
+
+#Sales_in_Thousand is in 1000
+fit <- lm(Sales_in_thousands ~ X__year_resale_value + Vehicle_type+Price_in_thousands+Engine_size+Horsepower
+          +Wheelbase+Width+Length+Curb_weight+Fuel_capacity+Fuel_efficiency,data = train)
+
+summary(fit)
+hist(carSales$Sales_in_thousands)
+
+train$lnSales <- log(train$Sales_in_thousands)
+hist(train$lnSales)
+
+#train$lnSales[train$lnSales <= -0.5]<- -0.5
+
+fit <- lm(lnSales ~ X__year_resale_value + Vehicle_type+Price_in_thousands+Engine_size+Horsepower
+          +Length+Curb_weight+Fuel_capacity+Fuel_efficiency+Power_perf_factor,data = train)
+summary(fit)
+
+#Other functions for FitModel
+
+coefficients(fit)
+confint(fit, level=0.95)
+fitted(fit)
+
+
+#Stepwise Regression
+
+library(MASS)
+fit <- lm(lnSales ~ X__year_resale_value + Price_in_thousands+ Engine_size+Horsepower+Wheelbase+Width
+          +Length+Curb_weight+Fuel_capacity+Fuel_efficiency+Vehicle_type + Power_perf_factor, data=train)
+step <- stepAIC(fit, direction="both")
+step$anova
+
+fitFinal <- lm(lnSales ~ X__year_resale_value + Price_in_thousands + Engine_size + 
+                 Wheelbase + Fuel_efficiency + VT,data=train)
+summary(fitFinal)
+coefficients(fitFinal)
+
+train$VT[train$Vehicle_type ==  "Passenger"] <- 1
+train$VT[train$Vehicle_type ==  "Car"] <- 0
+
+install.packages('car')
+library(car)
+vif(fit)

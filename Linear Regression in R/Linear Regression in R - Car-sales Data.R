@@ -1,7 +1,7 @@
 #Importing the data
-setwd("C:/Users/ChandraMouli/Desktop/DS-SAS Material/Business Analytics Module/Linear & Logistic In R/")
+setwd("E:/R-Programing/Linear Regression in R")
 
-mydata <- read.csv("car_sales.csv")
+mydata <- read.csv("E:/R-Programing/Linear Regression in R/Car_sales.csv")
 
 #Understand the data
 str(mydata)
@@ -35,12 +35,11 @@ mystats <- function(x) {
   max <- max(x,na.rm=T)
   UC <- m+3*s
   LC <- m-3*s
-  return(c(n=n, nmiss, mean=m, stdev=s,min = min, pctl=pctl, max=max, UC=UC, LC=LC))
+  return(c(n=n, nmiss=nmiss, mean=m, stdev=s,min = min, pctl=pctl, max=max, UC=UC, LC=LC))
 }
 
-vars <- c( "Sales_in_thousands" , "X__year_resale_value" ,  "Price_in_thousands",   
-           "Engine_size" , "Horsepower", "Wheelbase" , "Width" ,"Power_perf_factor" , "Length" , "Curb_weight" , 
-           "Fuel_capacity", "Fuel_efficiency" )
+vars <- 
+  
 
 stats<-apply(mydata[vars], 2, mystats)
 write.csv(stats, file = "stats.csv")
@@ -68,7 +67,7 @@ mydata[vars] <- apply(data.frame(mydata[,vars]), 2, function(x){x <- replace(x, 
 
 #Handling outliers in numeric variables
 #Method1: Cap the highest value at 99th percentile
-plot(mydata$Sales_in_thousands)
+plot(mydata$Sales_in_thousands) 
 mydata$Sales_in_thousands[mydata$Sales_in_thousands>257] <- quantile(mydata$Sales_in_thousands,.99, na.rm = T)
 
 #Method-2: Filtering outliers in DV
